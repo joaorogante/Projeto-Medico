@@ -11,5 +11,6 @@ void removerPaciente();
 void menuCadastrar();
 
 Paciente* getPacientePorRG(const char* rg);
+void inserirNaABB(Paciente *pac);
 
 #endif 

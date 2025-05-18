@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../Pesquisa/pesquisa.h"
 
 typedef struct ELista {
     Paciente dados;
@@ -49,6 +50,9 @@ void cadastrarPaciente() {
         novo->dados.nome, novo->dados.idade, novo->dados.rg,
         novo->dados.dia, novo->dados.mes, novo->dados.ano);
     logarOperacao("CADASTRO", detalhes_json);
+
+    // Adiciona la arvore binaria que vai ser usada para busca
+    inserirNaABB(&novo->dados);
 }
 
 void consultarPaciente() {
@@ -147,14 +151,17 @@ void atualizarPaciente() {
     ELista *atual = listaPacientes.inicio;
     while (atual != NULL) {
         if (strcmp(atual->dados.rg, rg) == 0) {
-            // salvo os dados antigos
+            // Remove da ABB antes de atualizar
+            removerDaABB(&atual->dados);
+
+            // Salva os dados antigos
             char detalhes_antes[256];
             snprintf(detalhes_antes, sizeof(detalhes_antes),
                 "{\"nome\":\"%s\",\"idade\":%d,\"rg\":\"%s\",\"data\":\"%02d/%02d/%04d\"}",
                 atual->dados.nome, atual->dados.idade, atual->dados.rg,
                 atual->dados.dia, atual->dados.mes, atual->dados.ano);
 
-            // pego os novos dados do usuario
+            // Pega os novos dados do usuário
             printf("Novo nome (atual: %s): ", atual->dados.nome);
             scanf(" %[^\n]", atual->dados.nome);
             printf("Nova idade (atual: %d): ", atual->dados.idade);
@@ -163,20 +170,23 @@ void atualizarPaciente() {
             scanf("%d %d %d", &atual->dados.dia, &atual->dados.mes, &atual->dados.ano);
             printf("Dados atualizados!\n");
 
-            // salvo os novos dados
+            // Insere novamente na ABB após atualizar
+            inserirNaABB(&atual->dados);
+
+            // Salva os novos dados
             char detalhes_depois[256];
             snprintf(detalhes_depois, sizeof(detalhes_depois),
                 "{\"nome\":\"%s\",\"idade\":%d,\"rg\":\"%s\",\"data\":\"%02d/%02d/%04d\"}",
                 atual->dados.nome, atual->dados.idade, atual->dados.rg,
                 atual->dados.dia, atual->dados.mes, atual->dados.ano);
 
-            // monto json com antes e depois
+            // Monta json com antes e depois
             char detalhes_json[1024];
             snprintf(detalhes_json, sizeof(detalhes_json),
                 "{\"rg\":\"%s\", \"antes\":%s, \"depois\":%s}",
                 rg, detalhes_antes, detalhes_depois);
 
-            // log da atualizacao
+            // Log da atualização
             logarOperacao("ATUALIZAR", detalhes_json);
             return;
         }
