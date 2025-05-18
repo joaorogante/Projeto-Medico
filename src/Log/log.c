@@ -1,10 +1,11 @@
 #include "log.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-static LogOperacao logOperacoes[MAX_LOG_OPERACOES];
-static int logCount = 0;
+// Pilha global de logs
+static LogStack logStack = {NULL, 0};
 
 // Função utilitária para pegar timestamp
 static void getTimestamp(char* buffer, int size) {
@@ -13,27 +14,44 @@ static void getTimestamp(char* buffer, int size) {
     strftime(buffer, size, "%Y-%m-%d %H:%M:%S", t);
 }
 
+void inicializarLogStack() {
+    logStack.top = NULL;
+    logStack.qtde = 0;
+}
+
 void logarOperacao(const char* operacao, const char* detalhes_json) {
-    if (logCount >= MAX_LOG_OPERACOES) return;
-    strncpy(logOperacoes[logCount].operacao, operacao, sizeof(logOperacoes[logCount].operacao) - 1);
-    logOperacoes[logCount].operacao[sizeof(logOperacoes[logCount].operacao) - 1] = '\0';
+    if (logStack.qtde >= MAX_LOG_OPERACOES)
+        return;
 
-    strncpy(logOperacoes[logCount].usuario, "Sistema TOP =)", sizeof(logOperacoes[logCount].usuario) - 1);
-    logOperacoes[logCount].usuario[sizeof(logOperacoes[logCount].usuario) - 1] = '\0';
+    LogCell *nova = (LogCell*)malloc(sizeof(LogCell));
+    if (!nova) return;
 
-    getTimestamp(logOperacoes[logCount].dataHora, sizeof(logOperacoes[logCount].dataHora));
+    strncpy(nova->log.operacao, operacao, sizeof(nova->log.operacao) - 1);
+    nova->log.operacao[sizeof(nova->log.operacao) - 1] = '\0';
 
-    strncpy(logOperacoes[logCount].detalhes, detalhes_json, sizeof(logOperacoes[logCount].detalhes) - 1);
-    logOperacoes[logCount].detalhes[sizeof(logOperacoes[logCount].detalhes) - 1] = '\0';
+    strncpy(nova->log.usuario, "Sistema TOP =)", sizeof(nova->log.usuario) - 1);
+    nova->log.usuario[sizeof(nova->log.usuario) - 1] = '\0';
 
-    logCount++;
+    getTimestamp(nova->log.dataHora, sizeof(nova->log.dataHora));
+
+    strncpy(nova->log.detalhes, detalhes_json, sizeof(nova->log.detalhes) - 1);
+    nova->log.detalhes[sizeof(nova->log.detalhes) - 1] = '\0';
+
+    nova->anterior = logStack.top;
+    logStack.top = nova;
+    logStack.qtde++;
 }
 
 void listarLogOperacoes() {
-    for (int i = 0; i < logCount; ++i) {
-        printf("{\"operacao\":\"%s\", \"dataHora\":\"%s\", \"detalhes\":%s}\n",
-            logOperacoes[i].operacao,
-            logOperacoes[i].dataHora,
-            logOperacoes[i].detalhes);
+    LogCell *atual = logStack.top;
+    int idx = logStack.qtde;
+    while (atual) {
+        printf("[%d] {\"operacao\":\"%s\", \"dataHora\":\"%s\", \"detalhes\":%s}\n",
+            idx,
+            atual->log.operacao,
+            atual->log.dataHora,
+            atual->log.detalhes);
+        atual = atual->anterior;
+        idx--;
     }
 }

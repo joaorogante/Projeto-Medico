@@ -10,7 +10,18 @@ typedef struct {
     char detalhes[256];     // JSON com os dados da operação
 } LogOperacao;
 
+typedef struct LogCell {
+    LogOperacao log;
+    struct LogCell *anterior;
+} LogCell;
+
+typedef struct {
+    LogCell *top;
+    int qtde;
+} LogStack;
+
 void logarOperacao(const char* operacao, const char* detalhes_json);
 void listarLogOperacoes();
+void inicializarLogStack();
 
 #endif
