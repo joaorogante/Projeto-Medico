@@ -10,4 +10,6 @@ void atualizarPaciente();
 void removerPaciente();
 void menuCadastrar();
 
+Paciente* getPacientePorRG(const char* rg);
+
 #endif 

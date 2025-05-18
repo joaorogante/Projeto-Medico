@@ -82,6 +82,29 @@ void consultarPaciente() {
     logarOperacao("CONSULTA", "{\"resultado\":\"nao encontrado\"}");
 }
 
+// Essa nao é utlizada nesse menu, e sim por outro modulos, como o atendimento
+Paciente* getPacientePorRG(const char* rg) {
+    ELista *atual = listaPacientes.inicio;
+    while (atual != NULL) {
+        if (strcmp(atual->dados.rg, rg) == 0) {
+
+            char detalhes_json[1024];
+            snprintf(detalhes_json, sizeof(detalhes_json),
+                "{\"nome\":\"%s\",\"idade\":%d,\"rg\":\"%s\",\"data\":\"%02d/%02d/%04d\"}",
+                atual->dados.nome, atual->dados.idade, atual->dados.rg,
+                atual->dados.dia, atual->dados.mes, atual->dados.ano);
+            logarOperacao("CONSULTA", detalhes_json);
+
+            return &atual->dados;
+        }
+        atual = atual->proximo;
+    }
+    printf("Paciente não encontrado!\n");
+    logarOperacao("CONSULTA", "{\"resultado\":\"nao encontrado\"}");
+    return NULL;
+}
+
+
 void listarPacientes() {
     ELista *atual = listaPacientes.inicio;
     if (!atual) {
