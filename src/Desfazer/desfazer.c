@@ -1,15 +1,16 @@
 #include "desfazer.h"
+#include "../Log/log.h" 
 #include <stdio.h>
 #include <stdlib.h>
 
-// Implementação das funções de log/desfazer
-
 void mostrarLogOperacoes() {
-    // Implementação conforme especificação
+    printf("\n--- LOG DE OPERAÇÕES ---\n");
+    listarLogOperacoes();
+    printf("------------------------\n");
 }
 
 void desfazerUltimaOperacao() {
-    // Implementação conforme especificação
+    // Implementação futura
 }
 
 /* Sub-menu 5: Desfazer última operação na fila normal */
