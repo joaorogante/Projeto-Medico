@@ -12,6 +12,7 @@ gcc main.c \
     src/Pesquisa/pesquisa.c \
     src/Desfazer/desfazer.c \
     src/IO/io.c \
+    src/Log/log.c \
     src/Sobre/sobre.c \
     -o a 
 ```
