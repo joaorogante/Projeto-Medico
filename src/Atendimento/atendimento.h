@@ -10,3 +10,6 @@ void mostrarFilaNormal();
 void menuAtendimento();
 
 #endif // ATENDIMENTO_H
+
+int removerPacienteDaFilaPorRG(const char *rg);
+int reinserirPacienteNoInicio(const char *rg);

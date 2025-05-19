@@ -105,6 +105,40 @@ void mostrarFilaNormal() {
     logarOperacao("MOSTRAR_FILA", detalhes_json);
 }
 
+/* atendimento.c */
+/* remove o nó com o dado RG; retorna 1=sucesso, 0=falha */
+int removerPacienteDaFilaPorRG(const char *rg) {
+    EFila *prev = NULL, *cur = filaAtendimento.head;
+    while (cur) {
+        if (strcmp(cur->dados->rg, rg) == 0) {
+            if (prev) prev->proximo = cur->proximo;
+            else filaAtendimento.head = cur->proximo;
+            if (!cur->proximo) filaAtendimento.tail = prev;
+            free(cur);
+            filaAtendimento.qtde--;
+            return 1;
+        }
+        prev = cur;
+        cur = cur->proximo;
+    }
+    return 0;
+}
+
+/* reinsera no início */
+int reinserirPacienteNoInicio(const char *rg) {
+    Paciente *pac = getPacientePorRG(rg);
+    if (!pac) return 0;
+    EFila *novo = malloc(sizeof(EFila));
+    if (!novo) return 0;
+    novo->dados = pac;
+    novo->proximo = filaAtendimento.head;
+    filaAtendimento.head = novo;
+    if (filaAtendimento.qtde == 0) filaAtendimento.tail = novo;
+    filaAtendimento.qtde++;
+    return 1;
+}
+
+
 void menuAtendimento() {
     int op;
     do {

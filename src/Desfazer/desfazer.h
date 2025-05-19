@@ -3,9 +3,14 @@
 
 #include "../tipos.h"
 
-// Funções de log/desfazer operações na fila normal
+/* Logs / desfazer para fila normal */
 void mostrarLogOperacoes();
 void desfazerUltimaOperacao();
+
+/* NOVAS funcionalidades de atendimento */
+void mostrarLogAtendimento();
+void desfazerUltimaOperacaoAtendimento();
+
 void menuDesfazer();
 
 #endif // DESFAZER_H
